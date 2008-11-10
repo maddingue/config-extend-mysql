@@ -1,4 +1,5 @@
 package Config::Extend::MySQL;
+use 5.006;   # read the CAVEATS if you really want a version that works on 5.5
 use strict;
 use warnings;
 use Carp;
@@ -10,7 +11,7 @@ use UNIVERSAL::require;
 
 {
     no strict "vars";
-    $VERSION = '0.02';
+    $VERSION = '0.03';
 }
 
 my %skip;
@@ -22,7 +23,7 @@ Config::Extend::MySQL - Extend your favourite .INI module to read MySQL configur
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
@@ -121,8 +122,15 @@ sub new {
     # read the file and resolve the MySQL-isms
     my $content = __read_config(file => $file);
 
-    open(my $fh, "<", \$content)
-        or croak "fatal: Can't read in-memory buffer: $!";
+    my $fh = undef;
+    if ($] < 5.008) {
+        require IO::String;
+        $fh = IO::String->new(\$content);
+    }
+    else {
+        open($fh, "<", \$content)
+            or croak "fatal: Can't read in-memory buffer: $!";
+    }
 
     # create the object using the given Config:: module
     my $backend = defined $args->{using} ? $args->{using} : "Config::Tiny";
@@ -173,7 +181,6 @@ sub __read_config {
     my ($what, $path) = @_;
     my $content = "";
     my $opts = {}; #{ err_mode => "quiet" };
-#  print STDERR " * read: $what $path\n";
 
     if ($what eq "file") {
         my $base_dir = dirname($path);
@@ -276,6 +283,10 @@ value with the new one, C<Config::IniFiles> appends it with a newline.
 =back
 
 And probably many more.
+
+Also note that in order to keep the code simple, this module wants 
+Perl 5.6 or newer. However, a patch to make it work on Perl 5.5.3 is 
+included in the distribution (F<patches/patch-for-perl5.5.diff>).
 
 
 =head1 SEE ALSO

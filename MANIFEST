@@ -1,9 +1,11 @@
+MANIFEST
+META.yml
+Makefile.PL
 Build.PL
 Changes
-MANIFEST
-Makefile.PL
 README
 lib/Config/Extend/MySQL.pm
+patches/patch-for-perl5.5.diff
 eg/read_with_ini_reader
 eg/read_with_inifiles
 eg/read_with_simple
@@ -28,4 +30,3 @@ t/files/real_world_sample_1.cnf
 t/files/real_world_sample_2.cnf
 t/pod-coverage.t
 t/pod.t
-META.yml

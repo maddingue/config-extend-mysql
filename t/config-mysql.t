@@ -1,5 +1,6 @@
 #!perl -T
 use strict;
+use Cwd;
 use File::Spec::Functions;
 use Test::More;
 
@@ -54,27 +55,28 @@ my @cases = (
     {
         file   => catfile(qw(t files 08section_include.cnf)),
         struct => [
-            [ main => debug => "no" ],
+            [ mysqld => debug => "no" ],
         ],
     },
     {
         file   => catfile(qw(t files 09section_param_before_include.cnf)),
         struct => [
-            [ main => debug => "no" ],
+            [ main   => debug => "yes" ],
+            [ mysqld => debug => "no" ],
         ],
     },
     {
         file   => catfile(qw(t files 10section_param_after_include.cnf)),
         struct => [
-            [ main => debug => "yes" ],
+            [ mysqld => debug => "yes" ],
         ],
     },
     {
         file   => catfile(qw(t files 11section_param_includedir.cnf)),
         struct => [
-            [ mysqladmin => debug => "no" ],
             [ mysqladmin => user  => "root" ],
             [ mysqladmin => password => "5ekr3t" ],
+            [ mysqld => debug => "no" ],
             [ mysqld => old_passwords => "false" ],
         ],
     },
@@ -156,6 +158,9 @@ $r = eval { $module->new({ from => $cases[1]{file}, using => $dummy_module }) };
 like( $@, qq</^fatal: Can't load module $dummy_module/>, 
     "calling new() with using=$dummy_module" );
 
+# cheating a little to work around code in Perl 5.6's Cwd.pm that fails
+# under taint mode
+my $pwd = getcwd();
 
 for my $backend (@backends) {
     # try to load a MySQL config using several backends
@@ -163,7 +168,7 @@ for my $backend (@backends) {
         $backend->require or skip "can't load $backend", $backend_tests;
 
         for my $case (@cases) {
-            my $file = $case->{file};
+            my $file = $] < 5.008 ? catfile($pwd, $case->{file}) : $case->{file};
             my $config = eval {
                 $module->new({ from => $file, using => $backend })
             };
