@@ -1,9 +1,9 @@
 ---
 name: Config-Extend-MySQL
-version: 0.03
+version: 0.04
 author:
   - 'Sebastien Aperghis-Tramoni <sebastien@aperghis.net>'
-abstract: Extend your favourite .INI module to read MySQL configuration file
+abstract: Extend your favourite .INI parser module to read MySQL configuration file
 license: perl
 resources:
   license: http://dev.perl.org/licenses/
@@ -20,7 +20,7 @@ build_requires:
 provides:
   Config::Extend::MySQL:
     file: lib/Config/Extend/MySQL.pm
-    version: 0.03
+    version: 0.04
 generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

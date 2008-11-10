@@ -1,6 +1,7 @@
 NAME
 
-    Config::Extend::MySQL - Read MySQL configuration file
+    Config::Extend::MySQL - Extend your favourite .INI parser module to
+    read MySQL configuration file
 
 
 DESCRIPTION

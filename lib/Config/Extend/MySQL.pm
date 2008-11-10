@@ -11,7 +11,7 @@ use UNIVERSAL::require;
 
 {
     no strict "vars";
-    $VERSION = '0.03';
+    $VERSION = '0.04';
 }
 
 my %skip;
@@ -19,11 +19,11 @@ my %skip;
 
 =head1 NAME
 
-Config::Extend::MySQL - Extend your favourite .INI module to read MySQL configuration file
+Config::Extend::MySQL - Extend your favourite .INI parser module to read MySQL configuration file
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 SYNOPSIS
 
@@ -153,6 +153,7 @@ sub __new_from {
 
     if ($backend eq "Config::IniFiles") {
         local $SIG{__WARN__} = sub {}; # avoid a warning from stat() on this $fh
+        local *IO::String::FILENO = sub { -1 };
         return Config::IniFiles->new(-file => $fh)
     }
     elsif ($backend eq "Config::Format::Ini") {
