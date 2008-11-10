@@ -10,7 +10,7 @@ use UNIVERSAL::require;
 
 {
     no strict "vars";
-    $VERSION = '0.01';
+    $VERSION = '0.02';
 }
 
 my %skip;
@@ -18,11 +18,11 @@ my %skip;
 
 =head1 NAME
 
-Config::Extend::MySQL - Read MySQL configuration file
+Config::Extend::MySQL - Extend your favourite .INI module to read MySQL configuration file
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
@@ -56,7 +56,7 @@ features like C<!include> and C<!includedir>, and bare boolean options,
 which without surprise make most common modules choke or die. 
 
 Hence this module which simply slurps all the files, recursing though the
-C<!include> and C<!includedir> directives and inlining their content in 
+C<!include> and C<!includedir> directives, inlining their content in 
 memory, and transforms the bare boolean options into explicitly assigned 
 options. 
 
@@ -113,7 +113,10 @@ sub new {
     croak "error: Empty argument 'from'"
         unless defined $args->{from} and length $args->{from};
 
+    # check that the file exists and contains something
     my $file = $args->{from};
+    croak "fatal: No such file '$file'" unless -f $file;
+    carp "warning: File '$file' is empty" and return if -s _ == 0;
 
     # read the file and resolve the MySQL-isms
     my $content = __read_config(file => $file);
@@ -123,9 +126,11 @@ sub new {
 
     # create the object using the given Config:: module
     my $backend = defined $args->{using} ? $args->{using} : "Config::Tiny";
-    $backend->require;
+    $backend->require or croak "fatal: Can't load module $args->{using}: $@";
     @Config::Extend::MySQL::ISA = ($backend);
-    my $self = bless __new_from($backend, $fh, \$content), $class;
+    my $self = __new_from($backend, $fh, \$content)
+        or croak "fatal: Backend module failed to parse '$file'";
+    bless $self, $class;
 
     # store the names to skip when reading directories
     my @skip_names = qw(. .. CVS);
@@ -205,6 +210,7 @@ sub __read_config {
     return $content
 }
 
+
 =head1 DIAGNOSTICS
 
 =over
@@ -214,6 +220,15 @@ sub __read_config {
 B<(E)> As the message says, the arguments must be given to the 
 function or method as a hash reference.
 
+=item C<Backend module failed to parse '%s'>
+
+B<(F)> The backend module was unable to parse the given file. 
+See L<"CAVEATS"> for some hints.
+
+=item C<Can't load module %s: %s>
+
+B<(F)> The backend module could not be loaded. 
+
 =item C<Can't read in-memory buffer: %s>
 
 B<(F)> This should not happen.
@@ -222,9 +237,17 @@ B<(F)> This should not happen.
 
 B<(E)> The given argument was empty, but a value is required.
 
+=item C<File '%s' is empty>
+
+B<(W)> The file is empty.
+
 =item C<Missing required argument '%s'>
 
 B<(E)> You forgot to supply a mandatory argument.
+
+=item C<No such file '%s'">
+
+B<(F)> The given path does not point to an existing file.
 
 =back
 
@@ -235,6 +258,10 @@ The different supported modules don't parse C<.INI> files exactly the
 same ways, and have different behaviours:
 
 =over
+
+=item *
+
+C<Config::IniFiles> doesn't want to create 
 
 =item *
 
@@ -277,7 +304,7 @@ progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Config::MySQL
+    perldoc Config::Extend::MySQL
 
 
 You can also look for information at:
@@ -286,19 +313,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Config-MySQL>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Config-Extend-MySQL>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Config-MySQL>
+L<http://annocpan.org/dist/Config-Extend-MySQL>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Config-MySQL>
+L<http://cpanratings.perl.org/d/Config-Extend-MySQL>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Config-MySQL>
+L<http://search.cpan.org/dist/Config-Extend-MySQL>
 
 =back
 
@@ -313,4 +340,4 @@ under the same terms as Perl itself.
 
 =cut
 
-1; # End of Config::MySQL
+1; # End of Config::Extend::MySQL

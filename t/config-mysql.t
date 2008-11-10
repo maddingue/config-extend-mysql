@@ -57,18 +57,18 @@ my @cases = (
             [ main => debug => "no" ],
         ],
     },
-#    {
-#        file   => catfile(qw(t files 09section_param_before_include.cnf)),
-#        struct => [
-#            [ main => debug => "no" ],
-#        ],
-#    },
-#    {
-#        file   => catfile(qw(t files 10section_param_after_include.cnf)),
-#        struct => [
-#            [ main => debug => "yes" ],
-#        ],
-#    },
+    {
+        file   => catfile(qw(t files 09section_param_before_include.cnf)),
+        struct => [
+            [ main => debug => "no" ],
+        ],
+    },
+    {
+        file   => catfile(qw(t files 10section_param_after_include.cnf)),
+        struct => [
+            [ main => debug => "yes" ],
+        ],
+    },
     {
         file   => catfile(qw(t files 11section_param_includedir.cnf)),
         struct => [
@@ -105,9 +105,7 @@ my @cases = (
             [ mysqladmin => password => "5ekr3t" ],
 
             # from parts/old_passwords.cnf
-            #[ mysqld =>  old_passwords  => "false" ],
-            # XXX can't be tested because of the differences of how
-            # Config::Tiny and Config::IniFiles treats multiple assignations
+            [ mysqld =>  old_passwords  => "false" ],
         ],
     },
 );
@@ -116,7 +114,7 @@ my $structs_count = scalar map { @{ $_->{struct} } } @cases;
 my $structs_tests = 1;
 my $backend_tests = 3 * @cases + $structs_tests * $structs_count;
 
-plan tests => 6 + $backend_tests * @backends;
+plan tests => 9 + $backend_tests * @backends;
 
 # load the module and check its API
 use_ok($module);
@@ -139,10 +137,29 @@ $r = eval { $module->new({ from => "" }) };
 like( $@, q</^error: Empty argument 'from'/>, 
     "calling new() with from=''" );
 
+my $dummy_file = "/plonk/krakk/kapow.conf";
+$r = eval { $module->new({ from => $dummy_file }) };
+like( $@, qq</^fatal: No such file '\Q$dummy_file\E'/>, 
+    "calling new() with from='$dummy_file'" );
 
-SKIP: {
+{
+    my $stderr = "";
+    local $SIG{__WARN__} = sub { $stderr .= join "", @_ };
+    my $file = catfile(qw(t files 01empty.cnf));
+    $r = eval { $module->new({ from => $file }) };
+    like( $stderr, qq</^warning: File '$file' is empty/>, 
+        "calling new() with from='$file'" );
+}
+
+my $dummy_module = "Plonk";
+$r = eval { $module->new({ from => $cases[1]{file}, using => $dummy_module }) };
+like( $@, qq</^fatal: Can't load module $dummy_module/>, 
+    "calling new() with using=$dummy_module" );
+
+
+for my $backend (@backends) {
     # try to load a MySQL config using several backends
-    for my $backend (@backends) {
+   SKIP: {
         $backend->require or skip "can't load $backend", $backend_tests;
 
         for my $case (@cases) {
@@ -167,20 +184,23 @@ SKIP: {
 
 sub get_param_from {
     my ($config, $section, $param) = @_;
+    my @values;
 
     if (eval { $config->isa("Config::IniFiles") }) {
-        return $config->val($section => $param)
+        @values = $config->val($section => $param)
     }
     elsif (eval { $config->isa("Config::Format::Ini") }) {
-        return $config->{$section}{$param}[0]
+        @values = $config->{$section}{$param}[0]
     }
     elsif (eval { $config->isa("Config::INI::Reader") }) {
-        return $config->{$section}{$param}
+        @values = $config->{$section}{$param}
     }
     elsif (eval { $config->isa("Config::Simple") }) {
-        return $config->get_block($section)->{$param}
+        @values = $config->get_block($section)->{$param}
     }
     elsif (eval { $config->isa("Config::Tiny") }) {
-        return $config->{$section}{$param}
+        @values = $config->{$section}{$param}
     }
+
+    return $values[-1]
 }

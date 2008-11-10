@@ -1,5 +1,11 @@
 Revision history for Config-Extend-MySQL
 
+0.02    2008.09.05
+        [CODE] Added more diagnostics.
+        [DOC] Fixed the links which where using the old name.
+        [TESTS] Fixed tests count.
+        [TESTS] Added a few more tests.
+
 0.01    2008.09.01
         First version, released on an unsuspecting world.
 

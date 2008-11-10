@@ -4,6 +4,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME                => 'Config::Extend::MySQL',
+    LICENSE             => 'perl',
     AUTHOR              => 'Sebastien Aperghis-Tramoni <sebastien@aperghis.net>',
     VERSION_FROM        => 'lib/Config/Extend/MySQL.pm',
     ABSTRACT_FROM       => 'lib/Config/Extend/MySQL.pm',

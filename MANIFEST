@@ -28,4 +28,4 @@ t/files/real_world_sample_1.cnf
 t/files/real_world_sample_2.cnf
 t/pod-coverage.t
 t/pod.t
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml

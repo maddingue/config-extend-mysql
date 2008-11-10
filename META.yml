@@ -1,20 +1,26 @@
---- #YAML:1.0
-name:                Config-Extend-MySQL
-version:             0.01
-abstract:            Read MySQL configuration file
-license:             ~
-author:              
-    - Sebastien Aperghis-Tramoni <sebastien@aperghis.net>
-generated_by:        ExtUtils::MakeMaker version 6.44
-distribution_type:   module
-requires:     
-    Carp:                          0
-    Config::Tiny:                  0
-    File::Basename:                0
-    File::Read:                    0
-    File::Spec::Functions:         0
-    Test::More:                    0
-    UNIVERSAL::require:            0
+---
+name: Config-Extend-MySQL
+version: 0.02
+author:
+  - 'Sebastien Aperghis-Tramoni <sebastien@aperghis.net>'
+abstract: Extend your favourite .INI module to read MySQL configuration file
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Carp: 0
+  Config::Tiny: 0
+  File::Basename: 0
+  File::Read: 0
+  File::Spec::Functions: 0
+  UNIVERSAL::require: 0
+build_requires:
+  Test::More: 0
+provides:
+  Config::Extend::MySQL:
+    file: lib/Config/Extend/MySQL.pm
+    version: 0.02
+generated_by: Module::Build version 0.2808
 meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
-    version: 1.3
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
