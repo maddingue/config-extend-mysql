@@ -14,6 +14,8 @@ use UNIVERSAL::require;
     $VERSION = '0.04';
 }
 
+use constant USE_IO_STRING => $] <= 5.008;
+
 my %skip;
 
 
@@ -123,7 +125,7 @@ sub new {
     my $content = __read_config(file => $file);
 
     my $fh = undef;
-    if ($] < 5.008) {
+    if (USE_IO_STRING) {
         require IO::String;
         $fh = IO::String->new(\$content);
     }
