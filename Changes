@@ -1,5 +1,8 @@
 Revision history for Config-Extend-MySQL
 
+        [TESTS] Added \Q..\E to the one test where it was missing, so the tests
+        pass under Win32.
+
 0.04    2008.09.11  (SAPER)
         [BUGFIX] Added a workaround so that Config::IniFiles can play nicely
         with IO::String. Thanks to CPAN Tester Chris Williams.

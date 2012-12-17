@@ -149,7 +149,7 @@ like( $@, qq</^fatal: No such file '\Q$dummy_file\E'/>,
     local $SIG{__WARN__} = sub { $stderr .= join "", @_ };
     my $file = catfile(qw(t files 01empty.cnf));
     $r = eval { $module->new({ from => $file }) };
-    like( $stderr, qq</^warning: File '$file' is empty/>, 
+    like( $stderr, qq</^warning: File '\Q$file\E' is empty/>, 
         "calling new() with from='$file'" );
 }
 
