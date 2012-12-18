@@ -11,7 +11,7 @@ use UNIVERSAL::require;
 
 {
     no strict "vars";
-    $VERSION = '0.04';
+    $VERSION = '0.05';
 }
 
 use constant USE_IO_STRING => $] <= 5.008;
@@ -25,7 +25,7 @@ Config::Extend::MySQL - Extend your favourite .INI parser module to read MySQL c
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =head1 SYNOPSIS
 

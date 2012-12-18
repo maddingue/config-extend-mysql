@@ -1,5 +1,6 @@
 Revision history for Config-Extend-MySQL
 
+0.05    2012.12.18  (SAPER)
         [TESTS] Added \Q..\E to the one test where it was missing, so the tests
         pass under Win32.
         [DOC] Added a missing bit.
