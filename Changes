@@ -2,6 +2,7 @@ Revision history for Config-Extend-MySQL
 
         [TESTS] Added \Q..\E to the one test where it was missing, so the tests
         pass under Win32.
+        [DOC] Added a missing bit.
 
 0.04    2008.09.11  (SAPER)
         [BUGFIX] Added a workaround so that Config::IniFiles can play nicely

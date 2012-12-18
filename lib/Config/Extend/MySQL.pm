@@ -271,7 +271,7 @@ same ways, and have different behaviours:
 
 =item *
 
-C<Config::IniFiles> doesn't want to create 
+C<Config::IniFiles> doesn't want to create an object from an empty file.
 
 =item *
 
